@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
-from flask import Flask
+from flask import Flask, render_template
 from google.cloud import bigquery
 
 app = Flask(__name__)
@@ -45,7 +45,8 @@ def main():
     df.iloc[:, 0] = pd.to_datetime(df.iloc[:, 0], format="%d %b %y").dt.strftime("%Y-%m-%d")
 
     # Add a new column 'timestamp' with timestamps
-    df.loc[:, "Timestamp"] = datetime.now()
+    current_timestamp = datetime.now()
+    df.loc[:, "Timestamp"] = current_timestamp
 
     # Save the edited DataFrame to a new CSV file
     output_file = 'edited_boe_rate.csv'
@@ -65,7 +66,8 @@ def main():
 
     job.result()  # Wait for the job to complete
 
-    return f'Successfully loaded {job.output_rows} rows into {project_id}.{dataset_id}.{table_name}'
+    # Render HTML template with results and timestamp
+    return render_template('results.html', results=df.to_html(), timestamp=current_timestamp)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
