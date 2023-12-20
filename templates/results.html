@@ -8,7 +8,12 @@
 </head>
 <body>
     <h1>Results</h1>
+    <form action="/" method="post">
+        <button type="submit">Trigger Processing</button>
+    </form>
     <p>Timestamp: {{ timestamp }}</p>
+    <p>Rows Read: {{ rows_read }}</p>
+    <p>Rows Written to BigQuery: {{ rows_written }}</p>
     <div>{{ results | safe }}</div>
 </body>
 </html>
